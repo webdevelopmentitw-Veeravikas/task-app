@@ -4,8 +4,8 @@ pipeline {
     parameters {
         string(
             name: 'IMAGE_NAMESPACE',
-            defaultValue: 'task-app',
-            description: 'Docker Hub username or organization'
+            defaultValue: 'YOUR_DOCKERHUB_USERNAME',
+            description: 'Docker Hub username'
         )
 
         string(
@@ -24,22 +24,9 @@ pipeline {
     environment {
         DOCKER_REGISTRY = 'docker.io'
         IMAGE_TAG = "${BUILD_NUMBER}"
-        DOCKER_CREDENTIALS_ID = 'docker-registry'
     }
 
     stages {
-
-        stage('Show Configuration') {
-            steps {
-                sh '''
-                    echo "Docker Registry: $DOCKER_REGISTRY"
-                    echo "Image Namespace: $IMAGE_NAMESPACE"
-                    echo "Image Tag: $IMAGE_TAG"
-                    echo "Database: $MYSQL_DATABASE"
-                    echo "MySQL User: $MYSQL_USER"
-                '''
-            }
-        }
 
         stage('Checkout') {
             steps {
@@ -71,11 +58,40 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Frontend') {
             steps {
                 dir('frontend') {
                     sh 'npm run build'
                 }
+            }
+        }
+
+        stage('Validate Configuration') {
+            steps {
+                sh '''
+                    set -e
+
+                    if [ -z "$IMAGE_NAMESPACE" ]; then
+                        echo "ERROR: IMAGE_NAMESPACE is empty"
+                        exit 1
+                    fi
+
+                    if [ -z "$MYSQL_DATABASE" ]; then
+                        echo "ERROR: MYSQL_DATABASE is empty"
+                        exit 1
+                    fi
+
+                    if [ -z "$MYSQL_USER" ]; then
+                        echo "ERROR: MYSQL_USER is empty"
+                        exit 1
+                    fi
+
+                    echo "Docker Registry : $DOCKER_REGISTRY"
+                    echo "Docker Namespace: $IMAGE_NAMESPACE"
+                    echo "Image Tag       : $IMAGE_TAG"
+                    echo "MySQL Database  : $MYSQL_DATABASE"
+                    echo "MySQL User      : $MYSQL_USER"
+                '''
             }
         }
 
@@ -105,26 +121,34 @@ pipeline {
                     sh '''
                         set -e
 
+                        echo "Logging in to Docker Hub..."
+
                         echo "$DOCKER_PASSWORD" | docker login \
                             "$DOCKER_REGISTRY" \
-                            -u "$DOCKER_USER" \
+                            --username "$DOCKER_USER" \
                             --password-stdin
+
+                        echo "Pushing backend..."
 
                         docker tag \
                             "${IMAGE_NAMESPACE}/task-backend:${IMAGE_TAG}" \
                             "${DOCKER_REGISTRY}/${IMAGE_NAMESPACE}/task-backend:${IMAGE_TAG}"
+
+                        docker push \
+                            "${DOCKER_REGISTRY}/${IMAGE_NAMESPACE}/task-backend:${IMAGE_TAG}"
+
+                        echo "Pushing frontend..."
 
                         docker tag \
                             "${IMAGE_NAMESPACE}/task-frontend:${IMAGE_TAG}" \
                             "${DOCKER_REGISTRY}/${IMAGE_NAMESPACE}/task-frontend:${IMAGE_TAG}"
 
                         docker push \
-                            "${DOCKER_REGISTRY}/${IMAGE_NAMESPACE}/task-backend:${IMAGE_TAG}"
-
-                        docker push \
                             "${DOCKER_REGISTRY}/${IMAGE_NAMESPACE}/task-frontend:${IMAGE_TAG}"
 
                         docker logout "$DOCKER_REGISTRY"
+
+                        echo "Docker images pushed successfully."
                     '''
                 }
             }
@@ -143,6 +167,8 @@ pipeline {
                     )
                 ]) {
                     sh '''
+                        set -e
+
                         export MYSQL_DATABASE="$MYSQL_DATABASE"
                         export MYSQL_USER="$MYSQL_USER"
                         export MYSQL_ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD"
@@ -152,6 +178,17 @@ pipeline {
                     '''
                 }
             }
+        }
+
+    }
+
+    post {
+        success {
+            echo 'CI/CD pipeline completed successfully.'
+        }
+
+        failure {
+            echo 'CI/CD pipeline failed. Check the failed stage above.'
         }
     }
 }
