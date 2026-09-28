@@ -10,10 +10,12 @@ pipeline {
     agent {label 'dev'}
 
     environment {
+         DOCKER_REGISTRY = 'docker.io'
         IMAGE_NAMESPACE = "${env.IMAGE_NAMESPACE ?: 'task-app'}"
         IMAGE_TAG = "${env.BUILD_NUMBER ?: 'latest'}"
         MYSQL_DATABASE = "${env.MYSQL_DATABASE ?: 'taskdb'}"
         MYSQL_USER = "${env.MYSQL_USER ?: 'taskuser'}"
+        DOCKER_CREDENTIALS_ID = 'docker-registry'
     }
 
     stages {
@@ -63,7 +65,7 @@ pipeline {
         stage('Docker Push') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'docker-registry',
+                   credentialsId: "${DOCKER_CREDENTIALS_ID}",
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASSWORD'
                 )]) {
