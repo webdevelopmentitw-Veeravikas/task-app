@@ -1,0 +1,46 @@
+# Live stack. Uses LIVE_DB_* from the project .env file.
+# docker compose --env-file .env -f docker-compose.prod.yml up -d
+
+services:
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      APP_ENV: live
+      NODE_ENV: production
+      PORT: 3001
+      DB_HOST: ${LIVE_DB_HOST:?Set LIVE_DB_HOST in .env}
+      DB_PORT: ${LIVE_DB_PORT:-3306}
+      DB_USER: ${LIVE_DB_USER:?Set LIVE_DB_USER in .env}
+      DB_PASSWORD: ${LIVE_DB_PASSWORD:?Set LIVE_DB_PASSWORD in .env}
+      DB_NAME: ${LIVE_DB_NAME:?Set LIVE_DB_NAME in .env}
+      DB_SSL: ${LIVE_DB_SSL:-false}
+    ports:
+      - "3001:3001"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3001/api/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s

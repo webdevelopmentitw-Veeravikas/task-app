@@ -1,0 +1,308 @@
+:root {
+  color-scheme: light;
+  --ink: #1c2430;
+  --muted: #5d6b7c;
+  --line: #e3ddd2;
+  --paper: #f4f1ea;
+  --surface: #fffcf7;
+  --bar: #17352c;
+  --bar-text: #f4f7f4;
+  --accent: #1f7a4d;
+  --accent-dark: #155c3a;
+  --danger: #9f2d2d;
+  --danger-soft: #fdecec;
+  --shadow: 0 10px 30px rgba(38, 32, 22, 0.06);
+  font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.topbar {
+  background: var(--bar);
+  color: var(--bar-text);
+}
+
+.topbar-inner,
+.wrap {
+  width: min(880px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.topbar-inner {
+  padding: 28px 0 24px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: #b7d2c6;
+}
+
+h1,
+h2 {
+  margin: 0;
+  font-weight: 650;
+}
+
+h1 {
+  font-size: 1.9rem;
+}
+
+.lede {
+  margin: 8px 0 0;
+  max-width: 42rem;
+  color: #d5e4dc;
+}
+
+.wrap {
+  padding: 28px 0 48px;
+}
+
+.banner {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.panel + .panel {
+  margin-top: 18px;
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+  margin-bottom: 16px;
+}
+
+.panel-head p,
+.hint,
+.empty,
+.meta {
+  color: var(--muted);
+}
+
+.panel-head p,
+.hint,
+.empty {
+  margin: 0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 0.8fr;
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-wide {
+  grid-column: 1 / -1;
+}
+
+label {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  border: 1px solid #d9d2c6;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: var(--ink);
+}
+
+textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+button:focus-visible {
+  outline: 2px solid #8fbea6;
+  outline-offset: 2px;
+}
+
+.form-actions,
+.actions,
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.form-actions {
+  align-items: center;
+  margin-top: 4px;
+}
+
+.btn {
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 9px 14px;
+  background: transparent;
+  color: var(--ink);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-dark);
+}
+
+.btn-ghost {
+  border-color: #d9d2c6;
+  background: #fff;
+}
+
+.btn-danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.filters {
+  margin-bottom: 14px;
+}
+
+.filter {
+  border: 1px solid #d9d2c6;
+  background: #fff;
+  border-radius: 999px;
+  padding: 7px 12px;
+  color: var(--muted);
+}
+
+.filter-active {
+  background: #e7f4ed;
+  border-color: #b7dcc8;
+  color: var(--accent-dark);
+  font-weight: 650;
+}
+
+.tasks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.task {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+  background: #fff;
+}
+
+.task-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.task h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.task p {
+  margin: 8px 0 0;
+  white-space: pre-wrap;
+}
+
+.badge {
+  flex: none;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.badge[data-status="pending"] {
+  background: #fff4e5;
+  color: #9a5b00;
+}
+
+.badge[data-status="in_progress"] {
+  background: #e8f1ff;
+  color: #1d4f91;
+}
+
+.badge[data-status="done"] {
+  background: #e7f6ee;
+  color: #146c43;
+}
+
+.meta {
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+}
+
+.actions {
+  margin-top: 12px;
+}
+
+.empty {
+  padding: 12px 0 4px;
+}
+
+@media (max-width: 700px) {
+  .form-grid,
+  .task-top,
+  .panel-head {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+}
