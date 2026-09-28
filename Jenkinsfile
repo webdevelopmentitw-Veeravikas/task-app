@@ -7,7 +7,7 @@
 // Optional job environment: MYSQL_DATABASE, MYSQL_USER, IMAGE_NAMESPACE
 
 pipeline {
-    agent any
+    agent {label 'dev'}
 
     environment {
         IMAGE_NAMESPACE = "${env.IMAGE_NAMESPACE ?: 'task-app'}"
