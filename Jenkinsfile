@@ -62,28 +62,42 @@ pipeline {
             }
         }
 
-        stage('Docker Push') {
-            steps {
-                withCredentials([usernamePassword(
-                   credentialsId: "${DOCKER_CREDENTIALS_ID}",
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASSWORD'
-                )]) {
-                    sh '''
-                        if [ -z "$DOCKER_REGISTRY" ]; then
-                          echo "DOCKER_REGISTRY must be set to push images."
-                          exit 1
-                        fi
-                        echo "$DOCKER_PASSWORD" | docker login "$DOCKER_REGISTRY" -u "$DOCKER_USER" --password-stdin
-                        docker tag "${IMAGE_NAMESPACE}/task-backend:${IMAGE_TAG}" "${DOCKER_REGISTRY}/${IMAGE_NAMESPACE}/task-backend:${IMAGE_TAG}"
-                        docker tag "${IMAGE_NAMESPACE}/task-frontend:${IMAGE_TAG}" "${DOCKER_REGISTRY}/${IMAGE_NAMESPACE}/task-frontend:${IMAGE_TAG}"
-                        docker push "${DOCKER_REGISTRY}/${IMAGE_NAMESPACE}/task-backend:${IMAGE_TAG}"
-                        docker push "${DOCKER_REGISTRY}/${IMAGE_NAMESPACE}/task-frontend:${IMAGE_TAG}"
-                        docker logout "$DOCKER_REGISTRY"
-                    '''
-                }
-            }
+     stage('Docker Push') {
+    steps {
+        withCredentials([
+            usernamePassword(
+                credentialsId: 'docker-registry',
+                usernameVariable: 'DOCKER_USER',
+                passwordVariable: 'DOCKER_PASSWORD'
+            )
+        ]) {
+            sh '''
+                set -e
+
+                echo "$DOCKER_PASSWORD" | docker login \
+                    "$DOCKER_REGISTRY" \
+                    -u "$DOCKER_USER" \
+                    --password-stdin
+
+                docker tag \
+                    "${IMAGE_NAMESPACE}/task-backend:${IMAGE_TAG}" \
+                    "${DOCKER_REGISTRY}/${IMAGE_NAMESPACE}/task-backend:${IMAGE_TAG}"
+
+                docker tag \
+                    "${IMAGE_NAMESPACE}/task-frontend:${IMAGE_TAG}" \
+                    "${DOCKER_REGISTRY}/${IMAGE_NAMESPACE}/task-frontend:${IMAGE_TAG}"
+
+                docker push \
+                    "${DOCKER_REGISTRY}/${IMAGE_NAMESPACE}/task-backend:${IMAGE_TAG}"
+
+                docker push \
+                    "${DOCKER_REGISTRY}/${IMAGE_NAMESPACE}/task-frontend:${IMAGE_TAG}"
+
+                docker logout "$DOCKER_REGISTRY"
+            '''
         }
+    }
+}
 
         stage('Deploy') {
             steps {
