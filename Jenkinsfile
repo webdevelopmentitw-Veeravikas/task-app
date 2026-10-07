@@ -17,7 +17,7 @@ pipeline {
 
     environment {
         // Docker Hub
-        DOCKER_REGISTRY = 'docker-registry'
+        DOCKER_REGISTRY = 'docker.io'
         IMAGE_NAMESPACE = 'veeravikas'
 
         // Jenkins build number
