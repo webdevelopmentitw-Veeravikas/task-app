@@ -17,7 +17,7 @@ pipeline {
 
     environment {
         // Docker Hub
-        DOCKER_REGISTRY = 'dockerhub-cred'
+        DOCKER_REGISTRY = 'docker-registry'
         IMAGE_NAMESPACE = 'veeravikas'
 
         // Jenkins build number
@@ -182,7 +182,7 @@ pipeline {
 
                 withCredentials([
                     usernamePassword(
-                        credentialsId: 'docker-registry',
+                        credentialsId: 'dockerhub-cred',
                         usernameVariable: 'DOCKER_USER',
                         passwordVariable: 'DOCKER_PASSWORD'
                     )
