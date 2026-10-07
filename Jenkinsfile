@@ -246,44 +246,44 @@ pipeline {
         // 8. DEPLOY
         // =========================================================
 
-        stage('Deploy') {
-            steps {
+        // stage('Deploy') {
+        //     steps {
 
-                withCredentials([
-                    string(
-                        credentialsId: 'mysql-root-password',
-                        variable: 'MYSQL_ROOT_PASSWORD'
-                    ),
+        //         withCredentials([
+        //             string(
+        //                 credentialsId: 'mysql-root-password',
+        //                 variable: 'MYSQL_ROOT_PASSWORD'
+        //             ),
 
-                    string(
-                        credentialsId: 'mysql-app-password',
-                        variable: 'MYSQL_PASSWORD'
-                    )
-                ]) {
+        //             string(
+        //                 credentialsId: 'mysql-app-password',
+        //                 variable: 'MYSQL_PASSWORD'
+        //             )
+        //         ]) {
 
-                    sh '''
-                        set -e
+        //             sh '''
+        //                 set -e
 
-                        echo "======================================"
-                        echo "Deploying Application"
-                        echo "======================================"
+        //                 echo "======================================"
+        //                 echo "Deploying Application"
+        //                 echo "======================================"
 
-                        export MYSQL_DATABASE="$MYSQL_DATABASE"
-                        export MYSQL_USER="$MYSQL_USER"
-                        export MYSQL_ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD"
-                        export MYSQL_PASSWORD="$MYSQL_PASSWORD"
+        //                 export MYSQL_DATABASE="$MYSQL_DATABASE"
+        //                 export MYSQL_USER="$MYSQL_USER"
+        //                 export MYSQL_ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD"
+        //                 export MYSQL_PASSWORD="$MYSQL_PASSWORD"
 
-                        docker compose up -d --build
+        //                 docker compose up -d --build
 
-                        echo "======================================"
-                        echo "Deployment Completed"
-                        echo "======================================"
+        //                 echo "======================================"
+        //                 echo "Deployment Completed"
+        //                 echo "======================================"
 
-                        docker compose ps
-                    '''
-                }
-            }
-        }
+        //                 docker compose ps
+        //             '''
+        //         }
+        //     }
+        // }
     }
 
     // =============================================================
